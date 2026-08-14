@@ -96,14 +96,25 @@ st.markdown(
 # --------------------------------------------------
 st.subheader("Patient Information")
 
+st.caption(
+    "ℹ️ Age is represented in the standardized numerical format used by the model, "
+    "so the value shown on the screen may look different from age in years. "
+    "This is expected."
+)
+
 col1, col2 = st.columns(2)
 
 with col1:
     age = st.number_input(
-        "Age (normalized value)",
+        "Age (standardized value)",
         min_value=0.0,
         max_value=1.0,
-        step=0.01
+        step=0.01,
+        format="%.2f",
+        help=(
+            "The model was trained using standardized age values "
+            "from the ANN-Thyroid dataset."
+        )
     )
 
 with col2:
@@ -112,55 +123,96 @@ with col2:
         options=[0, 1],
         format_func=lambda x: "Female" if x == 0 else "Male"
     )
-
 # --------------------------------------------------
 # CLINICAL INFORMATION
 # --------------------------------------------------
 st.subheader("Clinical Information")
 
+st.caption(
+    "Select Yes or No for each item. The app automatically converts "
+    "your selections into the numerical format required by the model."
+)
+
+def yes_no(label, help_text=None):
+    return st.selectbox(
+        label,
+        options=[0, 1],
+        format_func=lambda x: "No" if x == 0 else "Yes",
+        help=help_text
+    )
+
 c1, c2, c3 = st.columns(3)
 
 with c1:
-    on_thyroxine = st.selectbox("On Thyroxine", [0, 1])
-    sick = st.selectbox("Sick", [0, 1])
-    thyroid_surgery = st.selectbox("Thyroid Surgery", [0, 1])
-    query_hypothyroid = st.selectbox("Query Hypothyroid", [0, 1])
-    lithium = st.selectbox("Lithium", [0, 1])
+    on_thyroxine = yes_no(
+        "Currently taking thyroxine?"
+    )
+
+    sick = yes_no(
+        "Currently unwell?"
+    )
+
+    thyroid_surgery = yes_no(
+        "Previous thyroid surgery?"
+    )
+
+    query_hypothyroid = yes_no(
+        "Hypothyroidism suspected?",
+        "Select Yes if hypothyroidism is being considered or investigated."
+    )
+
+    lithium = yes_no(
+        "Currently taking lithium?"
+    )
 
 with c2:
-    query_on_thyroxine = st.selectbox(
-        "Query On Thyroxine", [0, 1]
+    query_on_thyroxine = yes_no(
+        "Thyroxine use uncertain?"
     )
 
-    pregnant = st.selectbox("Pregnant", [0, 1])
-
-    I131_treatment = st.selectbox(
-        "I131 Treatment", [0, 1]
+    pregnant = yes_no(
+        "Currently pregnant?"
     )
 
-    query_hyperthyroid = st.selectbox(
-        "Query Hyperthyroid", [0, 1]
+    I131_treatment = yes_no(
+        "Previous radioactive iodine (I-131) treatment?"
     )
 
-    goitre = st.selectbox("Goitre", [0, 1])
+    query_hyperthyroid = yes_no(
+        "Hyperthyroidism suspected?",
+        "Select Yes if hyperthyroidism is being considered or investigated."
+    )
+
+    goitre = yes_no(
+        "Goitre present?"
+    )
 
 with c3:
-    on_antithyroid_medication = st.selectbox(
-        "On Antithyroid Medication", [0, 1]
+    on_antithyroid_medication = yes_no(
+        "Currently taking antithyroid medication?"
     )
 
-    tumor = st.selectbox("Tumor", [0, 1])
-
-    hypopituitary = st.selectbox(
-        "Hypopituitary", [0, 1]
+    tumor = yes_no(
+        "Tumor present?"
     )
 
-    psych = st.selectbox("Psych", [0, 1])
+    hypopituitary = yes_no(
+        "Hypopituitarism present?"
+    )
 
+    psych = yes_no(
+        "Psychiatric condition recorded?"
+    )
 # --------------------------------------------------
 # LABORATORY MEASUREMENTS
 # --------------------------------------------------
 st.subheader("Laboratory Measurements")
+
+st.caption(
+    "ℹ️ Laboratory values are represented in the standardized numerical "
+    "format used by the model, so the values shown on the screen may look "
+    "different from those on a lab report. This is expected."
+)
 
 l1, l2, l3, l4, l5 = st.columns(5)
 
@@ -169,7 +221,8 @@ with l1:
         "TSH",
         min_value=0.0,
         step=0.001,
-        format="%.4f"
+        format="%.4f",
+        help="Standardized TSH value used by the ANN-Thyroid model."
     )
 
 with l2:
@@ -177,7 +230,8 @@ with l2:
         "T3",
         min_value=0.0,
         step=0.001,
-        format="%.4f"
+        format="%.4f",
+        help="Standardized T3 value used by the ANN-Thyroid model."
     )
 
 with l3:
@@ -185,7 +239,8 @@ with l3:
         "TT4",
         min_value=0.0,
         step=0.001,
-        format="%.4f"
+        format="%.4f",
+        help="Standardized TT4 value used by the ANN-Thyroid model."
     )
 
 with l4:
@@ -193,7 +248,8 @@ with l4:
         "T4U",
         min_value=0.0,
         step=0.001,
-        format="%.4f"
+        format="%.4f",
+        help="Standardized T4U value used by the ANN-Thyroid model."
     )
 
 with l5:
@@ -201,9 +257,9 @@ with l5:
         "FTI",
         min_value=0.0,
         step=0.001,
-        format="%.4f"
+        format="%.4f",
+        help="Standardized FTI value used by the ANN-Thyroid model."
     )
-
 # --------------------------------------------------
 # PREPARE PATIENT DATA
 # --------------------------------------------------
