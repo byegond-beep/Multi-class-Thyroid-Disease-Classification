@@ -1,6 +1,16 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import joblib
+import matplotlib.pyplot as plt
+from openai import OpenAI
+
+# --------------------------------------------------
+# OPENAI CLIENT
+# --------------------------------------------------
+client = OpenAI(
+    api_key=st.secrets["OPENAI_API_KEY"]
+)
 
 # --------------------------------------------------
 # PAGE SETUP
@@ -391,3 +401,88 @@ st.caption(
     "This application is not a substitute for professional "
     "medical diagnosis."
 )
+
+# --------------------------------------------------
+# THYROID AI ASSISTANT
+# --------------------------------------------------
+
+st.divider()
+
+st.subheader("💬 Thyroid AI Assistant")
+
+st.caption(
+    "Ask me about thyroid conditions, laboratory terms, model predictions, "
+    "or how to understand this app."
+)
+
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []
+
+# Show previous messages
+for message in st.session_state.chat_messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# User input
+user_question = st.chat_input(
+    "Ask the Thyroid AI Assistant..."
+)
+
+if user_question:
+
+    # Display user's question
+    st.session_state.chat_messages.append(
+        {"role": "user", "content": user_question}
+    )
+
+    with st.chat_message("user"):
+        st.markdown(user_question)
+
+    try:
+        response = client.responses.create(
+            model="gpt-5-mini",
+            instructions="""
+            You are the AI assistant for a machine-learning thyroid
+            disease classification application.
+
+            Explain thyroid-related concepts and the application's
+            machine-learning results in simple, accessible language.
+
+            You may explain:
+            - hypothyroidism
+            - hyperthyroidism
+            - normal thyroid function
+            - TSH, T3, TT4, T4U and FTI
+            - prediction confidence
+            - feature importance
+            - how the machine-learning application works
+            - limitations of the model
+
+            Do not claim that the model provides a medical diagnosis.
+            Do not prescribe medication or treatment.
+            Clearly distinguish a model prediction from a clinical diagnosis.
+
+            When a question requires medical evaluation, encourage the
+            user to discuss their results with a qualified healthcare
+            professional.
+
+            Keep answers concise, friendly and understandable to
+            someone without a medical or technical background.
+            """,
+            input=user_question
+        )
+
+        assistant_reply = response.output_text
+
+    except Exception:
+        assistant_reply = (
+            "I'm sorry, I couldn't connect to the AI assistant right now. "
+            "Please try again shortly."
+        )
+
+    st.session_state.chat_messages.append(
+        {"role": "assistant", "content": assistant_reply}
+    )
+
+    with st.chat_message("assistant"):
+        st.markdown(assistant_reply)
