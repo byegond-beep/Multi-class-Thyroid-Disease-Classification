@@ -474,11 +474,8 @@ if user_question:
 
         assistant_reply = response.output_text
 
-    except Exception:
-        assistant_reply = (
-            "I'm sorry, I couldn't connect to the AI assistant right now. "
-            "Please try again shortly."
-        )
+    except Exception as e:
+    assistant_reply = f"AI assistant error: {str(e)}"
 
     st.session_state.chat_messages.append(
         {"role": "assistant", "content": assistant_reply}
