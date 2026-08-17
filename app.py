@@ -475,7 +475,7 @@ if user_question:
         assistant_reply = response.output_text
 
     except Exception as e:
-    assistant_reply = f"AI assistant error: {str(e)}"
+        assistant_reply = f"AI assistant error: {str(e)}"
 
     st.session_state.chat_messages.append(
         {"role": "assistant", "content": assistant_reply}
