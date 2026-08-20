@@ -46,18 +46,30 @@ The most influential features were FTI, TSH, T3, TT4, and T4U.
 
 **Project Structure**
 
+## Project Structure
+
+## Project Structure
+
+```text
 Multi-class-Thyroid-Disease-Classification/
-│
 ├── data/
-│   ├── raw/                 # Original dataset
-│   └── processed/           # Cleaned dataset
-├── models/                  # Saved model and feature files
-├── notebooks/               # Analysis/model-development notebook
+│   ├── raw/
+│   └── processed/
+├── models/
+├── notebooks/
 ├── .gitignore
-├── app.py                   # Streamlit application
+├── app.py
 ├── LICENSE
 ├── README.md
 └── requirements.txt
+```
+
+- `data/raw/` – original dataset
+- `data/processed/` – cleaned dataset
+- `models/` – saved model and feature files
+- `notebooks/` – analysis and model development notebook
+- `app.py` – Streamlit application
+- `requirements.txt` – project dependencies
 
 **Run the Project**
 
