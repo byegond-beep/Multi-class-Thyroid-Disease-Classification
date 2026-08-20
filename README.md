@@ -1,281 +1,343 @@
-# Multi-class-Thyroid-Disease-Classification
-A multiclass machine learning project using the UCI ANN-Thyroid dataset to classify patients as Hyperthyroid, Hypothyroid, or Normal. The project compares multiple classification algorithms, evaluates their predictive performance, and identifies the clinical and laboratory features most associated with thyroid disease.
+Multiclass Thyroid Disease Classification Using Machine Learning
 
-The objective is to classify patients into three thyroid status categories:
+Project Overview
 
-* Class 1 — Hyperthyroidism
-* Class 2 — Hypothyroidism
-* Class 3 — Normal thyroid function
+This project develops and evaluates supervised machine-learning models for multiclass thyroid-function classification using the UCI ANN-Thyroid dataset. The prediction task is limited to the three outcome classes represented in the dataset:
 
-A key challenge addressed in the project is severe class imbalance, with Normal cases accounting for approximately 92.5% of observations. The analysis therefore prioritizes evaluation metrics that measure performance across all three classes rather than relying on overall accuracy alone.
+Class 1: Hyperthyroidism
 
-## Project Objectives
+Class 2: Hypothyroidism
 
-The project aims to:
+Class 3: Normal thyroid function
 
-* Explore the structure and quality of the thyroid dataset.
-* Examine relationships between clinical and laboratory variables and thyroid diagnosis.
-* Assess the impact of class imbalance on model performance.
-* Compare multiple machine learning classification algorithms.
-* Evaluate class weighting and SMOTE as imbalance-handling strategies.
-* Identify the strongest-performing model.
-* Optimize the selected model through hyperparameter tuning.
-* Identify the features that contribute most strongly to thyroid classification.
+The project follows an end-to-end machine-learning workflow covering data understanding, exploratory data analysis, preprocessing, class-imbalance handling, model comparison, hyperparameter tuning, model explainability, and deployment.
 
-## Dataset
+The final selected model is a class-weighted LightGBM classifier. The deployed prototype is intended as a machine-learning classification and educational tool and is not a replacement for established clinical diagnostic protocols or professional clinical judgement.
 
-The project uses a thyroid disease dataset containing:
+Clinical Scope
 
-* 7,200 observations
-* 21 predictor variables
-* 1 multiclass target variable
+Thyroid disorders are diagnosed using established clinical processes that combine clinical assessment and thyroid-function testing, with imaging and other investigations used when clinically indicated. This project investigates how machine learning can complement that process by identifying patterns across the demographic, clinical, treatment, and laboratory variables available in the ANN-Thyroid dataset.
 
-The predictors include demographic information, clinical indicators, treatment history, and thyroid laboratory measurements such as:
+The dataset imposes important clinical boundaries. It does not provide separate target classes for subclinical hyperthyroidism or subclinical hypothyroidism and does not contain the imaging, cytology, or histopathology information required to assess thyroid nodules, TI-RADS categories, structural thyroid disease, malignancy, or disease aetiology. The model should therefore be interpreted strictly as a classifier for the three dataset-defined thyroid-function categories.
 
-* TSH
-* T3
-* TT4
-* T4U
-* FTI
-* Age
-* Sex
-* Thyroxine treatment status
-* Thyroid surgery history
-* I131 treatment
-* Thyroid-related query indicators
-* Other clinical binary variables
+Key Questions
 
-### Target Distribution
+Can machine-learning models accurately classify patients into Hyperthyroid, Hypothyroid, and Normal thyroid-function categories using the demographic, clinical, and laboratory variables available in the ANN-Thyroid dataset?
 
-The dataset is highly imbalanced:
+Which clinical and laboratory features contribute most strongly to distinguishing the three thyroid-function classes?
 
-| Class | Diagnosis       | Approximate Proportion |
-| ----- | --------------- | ---------------------: |
-| 1     | Hyperthyroidism |                   2.3% |
-| 2     | Hypothyroidism  |                   5.1% |
-| 3     | Normal          |                  92.6% |
+Which supervised machine-learning algorithm provides the strongest and most balanced multiclass classification performance?
 
-Because of this imbalance, Macro F1-score and Balanced Accuracy are emphasized during model evaluation.
+Success Metrics
 
-## Project Workflow
+Because the dataset is highly imbalanced, model selection emphasizes balanced multiclass performance rather than overall accuracy alone.
 
-The notebook follows the machine learning workflow below:
+Macro F1-score ≥ 0.90
 
-1. Data Understanding
-2. Data Quality Assessment
-3. Exploratory Data Analysis
-4. Data Preparation
-5. Model Development and Evaluation
-6. Model Explainability
-7. Final Findings and Conclusion
+Balanced Accuracy ≥ 0.90
 
-### Exploratory Data Analysis
+Recall ≥ 0.85 for both Hyperthyroid and Hypothyroid classes
+
+Dataset
+
+The project uses the ANN-Thyroid data associated with the UCI Thyroid Disease collection. The original combined dataset contains 7,200 observations and 22 variables, including the target.
+
+The predictors include:
+
+Demographic variables: age and sex
+
+Clinical/treatment indicators: on thyroxine, query on thyroxine, antithyroid medication, sick, pregnant, thyroid surgery, I131 treatment, query hypothyroid, query hyperthyroid, lithium, goitre, tumor, hypopituitary, and psych
+
+Laboratory variables: TSH, T3, TT4, T4U, and FTI
+
+Target: class
+
+The continuous variables in the ANN-Thyroid data are supplied in a standardized numerical representation rather than ordinary raw clinical units. They should therefore not be interpreted directly as age in years or conventional laboratory-report values.
+
+Data Quality
+
+Initial assessment found:
+
+7,200 records
+
+No missing values
+
+71 duplicate records
+
+7,129 records after duplicate removal
+
+Severe class imbalance, with Normal cases forming the large majority of observations
+
+The cleaned data are used for subsequent preprocessing and model development.
+
+Exploratory Data Analysis
 
 EDA includes:
 
-* Target class distribution
-* Numerical feature distributions
-* Binary feature distributions
-* Outlier and skewness assessment
-* Numerical features versus thyroid diagnosis
-* Binary features versus thyroid diagnosis
-* Kruskal-Wallis statistical testing
-* Chi-square tests of association
-* Multivariate correlation analysis
+Target class distribution
 
-The analysis identified substantial differences in several thyroid laboratory measurements across diagnostic classes.
+Numerical-variable distributions
 
-## Data Preparation
+Binary clinical-variable distributions
+
+Numerical variables versus target class
+
+Kruskal-Wallis statistical testing
+
+Binary variables versus target class
+
+Chi-square testing
+
+Correlation analysis
+
+Assessment of class imbalance and potentially informative predictors
+
+The analysis identified thyroid laboratory measurements, particularly TSH, FTI, TT4, and T3, as important variables for distinguishing the three classes.
+
+Data Preprocessing
 
 The preprocessing workflow includes:
 
-* Removal of duplicate observations
-* Stratified train-test splitting
-* Preservation of the original three-class target
-* Feature scaling for scale-sensitive algorithms
-* Class weighting
-* SMOTE oversampling
+Duplicate removal
 
-SMOTE is applied only to the training data to prevent information leakage into the test set.
+Predictor and target separation
 
-## Machine Learning Models
+Stratified 80:20 train-test split
 
-Seven classification algorithms are evaluated:
+Evaluation of the original imbalanced training data
 
-* Logistic Regression
-* Decision Tree
-* Random Forest
-* Support Vector Machine (SVM)
-* K-Nearest Neighbors (KNN)
-* XGBoost
-* LightGBM
+Class weighting
 
-Where supported, each algorithm is evaluated under three strategies:
+SMOTE oversampling
 
-1. Original imbalanced training data
-2. Class weighting
-3. SMOTE
+Standardization for scale-sensitive algorithms
 
-KNN is evaluated using the Original and SMOTE strategies because it does not directly support class weighting.
+Scaling is applied to models such as Logistic Regression, SVM, and KNN. Tree-based models are trained on unscaled features because their threshold-based splitting does not require feature standardization.
 
-## Evaluation Metrics
+Models Evaluated
 
-Given the severe target imbalance, model evaluation emphasizes performance across all three diagnostic classes.
+The following supervised classification algorithms are evaluated:
 
-The following metrics are used:
+Logistic Regression
 
-* Accuracy
-* Balanced Accuracy
-* Macro Precision
-* Macro Recall
-* Macro F1-score
-* Confusion Matrix
+Decision Tree
 
-Macro F1-score is used as the primary model-comparison metric.
+Random Forest
 
-## Model Comparison
+Support Vector Machine
 
-Tree-based models substantially outperform the linear and distance-based approaches.
+K-Nearest Neighbors
 
-The strongest baseline configurations are:
+XGBoost
 
-| Model         | Strategy       | Accuracy | Balanced Accuracy | Macro F1 |
-| ------------- | -------------- | -------: | ----------------: | -------: |
-| XGBoost       | Class Weighted |   0.9986 |            0.9995 |   0.9953 |
-| LightGBM      | Class Weighted |   0.9986 |            0.9995 |   0.9953 |
-| Decision Tree | Class Weighted |   0.9993 |            0.9899 |   0.9947 |
+LightGBM
 
-Class-Weighted XGBoost and LightGBM achieve identical test-set performance and therefore undergo additional cross-validation.
+Models are compared across the original data, class-weighted approaches, and SMOTE-based training where appropriate.
 
-## Final Model Selection
+Model Evaluation
 
-Five-fold stratified cross-validation is used to compare the two leading models.
+Given the class imbalance, the project prioritizes:
 
-| Model                     | Mean CV Macro F1 | Standard Deviation |
-| ------------------------- | ---------------: | -----------------: |
-| XGBoost — Class Weighted  |           0.9724 |             0.0101 |
-| LightGBM — Class Weighted |           0.9751 |             0.0095 |
+Macro F1-score
 
-Class-Weighted LightGBM is selected because it achieves a slightly higher mean cross-validation Macro F1-score with slightly lower variability.
+Balanced Accuracy
 
-## Hyperparameter Tuning
+Class-specific precision and recall
 
-The selected LightGBM model is optimized using RandomizedSearchCV with stratified five-fold cross-validation.
+Confusion matrices
 
-The selected hyperparameters include:
+Cross-validation performance
 
-| Hyperparameter    | Selected Value |
-| ----------------- | -------------: |
-| n_estimators      |            300 |
-| learning_rate     |           0.05 |
-| num_leaves        |             15 |
-| min_child_samples |             30 |
-| max_depth         |             -1 |
-| subsample         |           0.70 |
-| colsample_bytree  |           0.70 |
+The strongest candidate models are further assessed using cross-validation before final model selection and hyperparameter tuning.
 
-Hyperparameter tuning improves the cross-validation Macro F1-score from:
+Final Model
 
-`0.9751 → 0.9793`
+Class-Weighted LightGBM was selected as the final model because of its strong test-set performance and stable cross-validation results.
 
-## Final Model Performance
+Final tuned LightGBM performance:
 
-The tuned Class-Weighted LightGBM model achieves:
+Metric
 
-| Metric            |  Score |
-| ----------------- | -----: |
-| Accuracy          | 0.9986 |
-| Balanced Accuracy | 0.9995 |
-| Macro Precision   | 0.9912 |
-| Macro Recall      | 0.9995 |
-| Macro F1          | 0.9953 |
+Result
 
-The final confusion matrix shows that the model correctly classifies:
+Accuracy
 
-* 33 of 33 Hyperthyroid cases
-* 74 of 74 Hypothyroid cases
-* 1,317 of 1,319 Normal cases
+99.86%
 
-Only two Normal observations are misclassified as Hypothyroid.
+Macro F1-score
 
-## Model Explainability
+0.9953
 
-LightGBM feature importance is used to examine the predictors contributing most strongly to model decisions.
+Balanced Accuracy
+
+0.9995
+
+The final model correctly classified all Hyperthyroid and Hypothyroid test cases, with only two Normal cases misclassified as Hypothyroid.
+
+These near-perfect results should be interpreted cautiously because they may reflect the relatively clean ANN-Thyroid dataset, strong class-separating laboratory patterns, feature redundancy, or similarity between observations in the train and test partitions. External validation is required before broader clinical interpretation.
+
+Model Explainability
+
+Global LightGBM feature importance is used to examine which predictors contribute most strongly to model classification.
 
 The most influential features include:
 
-1. FTI
-2. TSH
-3. T3
-4. TT4
-5. T4U
-6. Age
+FTI
 
-Overall, thyroid-related laboratory measurements contribute substantially more to classification than most binary clinical variables.
+TSH
 
-## Key Insights
+T3
 
-* Severe class imbalance can make overall accuracy misleading.
-* Macro F1 and Balanced Accuracy provide a more informative assessment of multiclass performance.
-* Class imbalance handling has different effects depending on the algorithm.
-* SMOTE substantially improves minority-class detection for Logistic Regression and SVM.
-* Class weighting performs particularly well with the strongest tree-based models.
-* Tree-based models outperform Logistic Regression, SVM, and KNN in this dataset.
-* Hyperparameter tuning improves LightGBM cross-validation performance, although its already strong test performance remains unchanged.
-* Thyroid laboratory measurements are the dominant predictors of diagnostic class.
+TT4
 
-## Technologies and Libraries
+T4U
 
-The project is implemented in Python using:
+Feature importance reflects predictive contribution within the model and should not be interpreted as evidence of causality or as a patient-specific clinical explanation.
 
-* pandas
-* NumPy
-* Matplotlib
-* Seaborn
-* SciPy
-* scikit-learn
-* imbalanced-learn
-* XGBoost
-* LightGBM
+Deployment
 
-## Running the Notebook
+The final LightGBM classifier is serialized for use in the Streamlit application.
 
-Clone or download the project and ensure the required Python packages are installed.
+Saved model artifacts:
 
-Example:
+thyroid_lightgbm_model.pkl — trained final LightGBM classifier
 
-```bash
-pip install pandas numpy matplotlib seaborn scipy scikit-learn imbalanced-learn xgboost lightgbm
-```
+thyroid_features.pkl — feature names/order expected by the model
 
-Launch Jupyter Notebook or JupyterLab:
+The Streamlit interface provides a user-facing prediction workflow and model information. Because the ANN-Thyroid continuous variables are already standardized, the current prototype must preserve the same numerical representation expected by the trained model.
 
-```bash
-jupyter notebook
-```
+A future deployment-oriented version should be trained using raw clinical measurements, or use a fully documented preprocessing pipeline, so that users can enter age in years and laboratory values in familiar clinical units.
 
-Then open the project notebook and execute the cells sequentially from top to bottom.
+Project Structure
 
-## Limitations
+Multi-class-Thyroid-Disease-Classification/
+│
+├── data/
+│   ├── raw/                 # Original dataset
+│   └── processed/           # Cleaned dataset
+│
+├── models/                  # Saved model and feature files
+├── notebooks/               # Analysis and model-development notebook
+│
+├── .gitignore
+├── app.py                   # Streamlit application
+├── LICENSE
+├── README.md
+└── requirements.txt
 
-* Hyperthyroid and Hypothyroid observations are substantially less frequent than Normal cases.
-* The model has been developed and evaluated using a single dataset.
-* External validation on an independent patient population has not been conducted.
-* Synthetic observations generated through SMOTE may not fully represent real clinical patient profiles.
-* Near-perfect test performance should be interpreted cautiously until independently validated.
-* Feature importance represents predictive contribution and should not be interpreted as evidence of causality.
+The structure separates raw and cleaned data, trained model artifacts, notebook analysis, and deployment files. Keep API keys and .streamlit/secrets.toml out of GitHub.
 
-## Conclusion
+Running the Project
 
-The project demonstrates that machine learning can effectively distinguish Hyperthyroid, Hypothyroid, and Normal thyroid cases when class imbalance is appropriately addressed.
+1. Clone the repository
 
-Among the evaluated algorithms, Class-Weighted LightGBM provides the strongest and most stable overall performance. Following hyperparameter tuning, the final model achieves a Macro F1-score of 0.9953 and Balanced Accuracy of 0.9995 on the test set.
+git clone <your-repository-url>
+cd Multi-class-Thyroid-Disease-Classification
 
-FTI, TSH, T3, TT4, and T4U emerge as the most influential predictors, highlighting the importance of thyroid-related laboratory measurements in classification.
+2. Create and activate a virtual environment
 
-Further validation using independent and more diverse datasets is recommended before considering broader practical or clinical application.
+python -m venv venv
 
-## Disclaimer
+Windows:
 
-This project is intended for educational and research purposes only. The developed machine learning model is not a medical diagnostic tool and should not replace professional clinical assessment or medical judgment.
+venv\Scripts\activate
 
+macOS/Linux:
+
+source venv/bin/activate
+
+3. Install dependencies
+
+pip install -r requirements.txt
+
+4. Run the notebook
+
+Open notebooks/thyroid_disease_classification.ipynb in Jupyter Notebook, JupyterLab, or VS Code and run the cells in sequence.
+
+5. Run the Streamlit application
+
+streamlit run app.py
+
+Main Python Libraries
+
+The project uses libraries including:
+
+pandas
+
+NumPy
+
+Matplotlib
+
+Seaborn
+
+SciPy
+
+scikit-learn
+
+imbalanced-learn
+
+XGBoost
+
+LightGBM
+
+joblib
+
+Streamlit
+
+Refer to requirements.txt for the deployment environment's exact package requirements.
+
+Limitations
+
+Hyperthyroid and Hypothyroid observations are substantially less frequent than Normal observations.
+
+The model has been developed and evaluated on a single dataset and has not been externally validated.
+
+SMOTE-generated observations may not fully represent real clinical patient profiles.
+
+The unusually high test performance may partly reflect characteristics of the ANN-Thyroid dataset.
+
+Age and laboratory variables are supplied in standardized numerical form rather than ordinary clinical units.
+
+Subclinical hyperthyroidism and subclinical hypothyroidism are not separately represented as target classes.
+
+Imaging, cytology, histopathology, and TI-RADS information are not available, preventing assessment of structural thyroid disease and malignancy.
+
+Global feature importance does not establish causality or provide patient-level clinical explanations.
+
+The model is intended to support classification within the dataset-defined categories and should not replace established diagnostic protocols or clinical judgement.
+
+Future Improvements
+
+Future work could include:
+
+External validation using independent and more diverse patient populations
+
+Development using raw age and laboratory measurements in clinically familiar units
+
+A reproducible end-to-end preprocessing and prediction pipeline
+
+Evaluation of probability calibration
+
+Patient-level explainability methods
+
+Expansion to clinically relevant thyroid states if suitable datasets become available
+
+Integration of imaging or pathology information where appropriate and supported by the data
+
+References
+
+American Thyroid Association. Thyroid function tests [Internet]. Falls Church (VA): American Thyroid Association. Available from: https://www.thyroid.org/thyroid-function-tests/
+
+Van Uytfanghe K, Ehrenkranz J, Halsall D, Hoff K, Loh TP, Spencer CA, et al. Thyroid stimulating hormone and thyroid hormones (triiodothyronine and thyroxine): an American Thyroid Association-commissioned review of current clinical and laboratory status. Thyroid. 2023;33(9).
+
+Biondi B, Cooper DS. The clinical significance of subclinical thyroid dysfunction. Endocr Rev. 2008;29(1):76-131.
+
+Tessler FN, Middleton WD, Grant EG, Hoang JK, Berland LL, Teefey SA, et al. ACR Thyroid Imaging, Reporting and Data System (TI-RADS): white paper of the ACR TI-RADS Committee. J Am Coll Radiol. 2017;14(5):587-595.
+
+Liu J, Wang Y, Da D, Zheng M. Hyperfunctioning thyroid carcinoma: a systematic review. Mol Clin Oncol. 2019;11(6):535-550.
+
+UCI Machine Learning Repository. Thyroid Disease [Internet]. Irvine (CA): University of California, Irvine. Available from: https://archive.ics.uci.edu/dataset/102/thyroid+disease
+
+Disclaimer
+
+This project is intended for machine-learning research and educational demonstration. Predictions from the model should not be interpreted as a comprehensive thyroid diagnosis or used as a substitute for professional medical evaluation
